@@ -1,4 +1,3 @@
-```markdown
 # ObjectPath
 
 ObjectPath: A simple and intuitive library for accessing object values using string path expressions in .NET.
@@ -9,7 +8,6 @@ Install the ObjectPath library via NuGet:
 
 ```bash
 dotnet add package ObjectPath
-```
 
 ## Usage
 
