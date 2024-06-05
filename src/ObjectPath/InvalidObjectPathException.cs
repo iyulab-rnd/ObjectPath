@@ -1,4 +1,4 @@
-﻿namespace ObjectPath
+﻿namespace ObjectPathLibrary
 {
     public class InvalidObjectPathException : Exception
     {

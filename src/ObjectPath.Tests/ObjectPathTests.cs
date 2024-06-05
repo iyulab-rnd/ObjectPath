@@ -1,7 +1,8 @@
 ﻿using System.Text.Json;
 using Xunit;
+using ObjectPathLibrary;
 
-namespace ObjectPath.Tests
+namespace ObjectPathLibrary.Tests
 {
     public class ObjectPathTests
     {

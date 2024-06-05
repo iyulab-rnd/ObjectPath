@@ -1,5 +1,5 @@
 ﻿
-namespace ObjectPath.Tests
+namespace ObjectPathLibrary.Tests
 {
     public class Person
     {
