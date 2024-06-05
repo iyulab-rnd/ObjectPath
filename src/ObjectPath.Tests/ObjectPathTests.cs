@@ -542,5 +542,190 @@ namespace ObjectPathLibrary.Tests
             Assert.Equal("Hello", stringValue);
             Assert.True((bool)boolValue);
         }
+
+
+        [Fact]
+        public void DynamicAccessTest()
+        {
+            // Arrange
+            var people = new Person[]
+            {
+                new Person
+                {
+                    Name = "John",
+                    Age = 30,
+                    Address = new Address
+                    {
+                        City = "New York",
+                        Street = "123 Main St"
+                    }
+                },
+                new Person
+                {
+                    Name = "Jane",
+                    Age = 25,
+                    Address = new Address
+                    {
+                        City = "London",
+                        Street = "456 Oxford St"
+                    }
+                }
+            };
+
+            // Act
+            var person1 = ObjectPath.GetValue(people, "[0]") as dynamic;
+
+            // Assert
+            Assert.Equal("John", person1.Name);
+            Assert.Equal(30, person1.Age);
+            Assert.Equal("New York", person1.Address.City);
+        }
+
+        [Fact]
+        public void DictionaryAccessTest()
+        {
+            var dic = new Dictionary<string, object>
+            {
+                ["Name"] = "John",
+                ["Age"] = 30,
+                ["Address"] = new Dictionary<string, object>
+                {
+                    ["City"] = "New York",
+                    ["Street"] = "123 Main St"
+                }
+            };
+
+            // Act
+            var name = ObjectPath.GetValue(dic, "Name");
+            var age = ObjectPath.GetValue(dic, "Age");
+            var city = ObjectPath.GetValue(dic, "Address.City");
+            var street = ObjectPath.GetValue(dic, "Address.Street");
+
+            var address = ObjectPath.GetValue(dic, "Address") as IDictionary<string, object>;
+            var addressExpando = address!.ToExpando();
+
+            // Assert
+            Assert.Equal("John", name);
+            Assert.Equal(30, age);
+            Assert.Equal("New York", city);
+            Assert.Equal("123 Main St", street);
+
+            Assert.Equal("New York", address["City"]);
+            Assert.Equal("123 Main St", address["Street"]);
+
+            Assert.Equal("New York", addressExpando?.City);
+            Assert.Equal("123 Main St", addressExpando?.Street);
+        }
+
+
+        [Fact]
+        public void GetValueByPath_ValidPath_ReturnsValue()
+        {
+            var obj = new
+            {
+                Name = "John",
+                Age = 30,
+                Address = new
+                {
+                    City = "New York",
+                    Street = "123 Main St"
+                }
+            };
+
+            var name = obj.GetValueByPath("Name");
+            var city = obj.GetValueByPath("Address.City");
+
+            Assert.Equal("John", name);
+            Assert.Equal("New York", city);
+        }
+
+        [Fact]
+        public void GetValueByPath_InvalidPath_ThrowsException()
+        {
+            var obj = new
+            {
+                Name = "John",
+                Age = 30
+            };
+
+            Assert.Throws<InvalidObjectPathException>(() => obj.GetValueByPath("NonExistentProperty"));
+        }
+
+        [Fact]
+        public void GetValueByPathOrNull_ValidPath_ReturnsValue()
+        {
+            var obj = new
+            {
+                Name = "John",
+                Age = 30,
+                Address = new
+                {
+                    City = "New York",
+                    Street = "123 Main St"
+                }
+            };
+
+            var name = obj.GetValueByPathOrNull("Name");
+            var city = obj.GetValueByPathOrNull("Address.City");
+
+            Assert.Equal("John", name);
+            Assert.Equal("New York", city);
+        }
+
+        [Fact]
+        public void GetValueByPathOrNull_InvalidPath_ReturnsNull()
+        {
+            var obj = new
+            {
+                Name = "John",
+                Age = 30
+            };
+
+            var value = obj.GetValueByPathOrNull("NonExistentProperty");
+
+            Assert.Null(value);
+        }
+
+        [Fact]
+        public void GetValueByPath_DictionaryAccess_ReturnsValue()
+        {
+            var dic = new Dictionary<string, object>
+            {
+                ["Name"] = "John",
+                ["Age"] = 30,
+                ["Address"] = new Dictionary<string, object>
+                {
+                    ["City"] = "New York",
+                    ["Street"] = "123 Main St"
+                }
+            };
+
+            var name = dic.GetValueByPath("Name");
+            var city = dic.GetValueByPath("Address.City");
+
+            Assert.Equal("John", name);
+            Assert.Equal("New York", city);
+        }
+
+        [Fact]
+        public void GetValueByPathOrNull_DictionaryAccess_ReturnsValue()
+        {
+            var dic = new Dictionary<string, object>
+            {
+                ["Name"] = "John",
+                ["Age"] = 30,
+                ["Address"] = new Dictionary<string, object>
+                {
+                    ["City"] = "New York",
+                    ["Street"] = "123 Main St"
+                }
+            };
+
+            var name = dic.GetValueByPathOrNull("Name");
+            var city = dic.GetValueByPathOrNull("Address.City");
+
+            Assert.Equal("John", name);
+            Assert.Equal("New York", city);
+        }
     }
 }

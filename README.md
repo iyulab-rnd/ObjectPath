@@ -17,7 +17,7 @@ ObjectPath allows you to access values within objects using string path expressi
 ### Basic Usage
 
 ```csharp
-using ObjectPath;
+using ObjectPathLibrary;
 
 // Example object
 var obj = new 
@@ -32,15 +32,15 @@ var obj = new
 };
 
 // Access values using path expressions
-var name = ObjectPath.GetValue(obj, "Name"); // John
-var city = ObjectPath.GetValue(obj, "Address.City"); // New York
+var name = obj.GetValueByPath("Name"); // John
+var city = obj.GetValueByPath("Address.City"); // New York
 ```
 
 ### JSON Example
 
 ```csharp
 using System.Text.Json;
-using ObjectPath;
+using ObjectPathLibrary;
 
 // JSON string
 var json = @"
@@ -57,8 +57,8 @@ var jsonDocument = JsonDocument.Parse(json);
 var jsonElement = jsonDocument.RootElement;
 
 // Access values using path expressions
-var name = ObjectPath.GetValue(jsonElement, "name"); // John
-var street = ObjectPath.GetValue(jsonElement, "address.street"); // 123 Main St
+var name = jsonElement.GetValueByPath("name"); // John
+var street = jsonElement.GetValueByPath("address.street"); // 123 Main St
 ```
 
 ### Array Example
@@ -66,7 +66,7 @@ var street = ObjectPath.GetValue(jsonElement, "address.street"); // 123 Main St
 ObjectPath supports accessing array and list elements using index notation.
 
 ```csharp
-using ObjectPath;
+using ObjectPathLibrary;
 
 // Example object with arrays and lists
 var obj = new 
@@ -80,8 +80,8 @@ var obj = new
 };
 
 // Access array elements
-var firstNumber = ObjectPath.GetValue(obj, "Numbers[0]"); // 1
-var secondPersonName = ObjectPath.GetValue(obj, "People[1].Name"); // Jane
+var firstNumber = obj.GetValueByPath("Numbers[0]"); // 1
+var secondPersonName = obj.GetValueByPath("People[1].Name"); // Jane
 ```
 
 ### Case Sensitivity
@@ -102,6 +102,99 @@ var age = ObjectPath.GetValue(obj, "age", ignoreCase: false); // 30
 var invalid = ObjectPath.GetValue(obj, "name", ignoreCase: false);
 ```
 
+### Dictionary Access
+
+You can also access values in dictionaries using path expressions.
+
+```csharp
+using ObjectPathLibrary;
+using Xunit;
+
+[Fact]
+public void DictionaryAccessTest()
+{
+    var dic = new Dictionary<string, object>
+    {
+        ["Name"] = "John",
+        ["Age"] = 30,
+        ["Address"] = new Dictionary<string, object>
+        {
+            ["City"] = "New York",
+            ["Street"] = "123 Main St"
+        }
+    };
+
+    // Act
+    var name = dic.GetValueByPath("Name");
+    var age = dic.GetValueByPath("Age");
+    var city = dic.GetValueByPath("Address.City");
+    var street = dic.GetValueByPath("Address.Street");
+
+    var address = dic.GetValueByPath("Address") as IDictionary<string, object>;
+    var addressExpando = address!.ToExpando();
+
+    // Assert
+    Assert.Equal("John", name);
+    Assert.Equal(30, age);
+    Assert.Equal("New York", city);
+    Assert.Equal("123 Main St", street);
+
+    Assert.Equal("New York", address["City"]);
+    Assert.Equal("123 Main St", address["Street"]);
+
+    Assert.Equal("New York", addressExpando?.City);
+    Assert.Equal("123 Main St", addressExpando?.Street);
+}
+```
+
+### Handling Exceptions
+
+Use `GetValueByPathOrNull` to safely get values without throwing exceptions.
+
+```csharp
+using ObjectPathLibrary;
+
+var obj = new 
+{
+    Name = "John",
+    Address = new 
+    {
+        City = "New York"
+    }
+};
+
+// Access values using path expressions
+var name = obj.GetValueByPathOrNull("Name"); // John
+var nonExistent = obj.GetValueByPathOrNull("NonExistentProperty"); // null
+```
+
+## ObjectPathExtensions.cs
+
+```csharp
+namespace ObjectPathLibrary
+{
+    public static class ObjectPathExtensions
+    {
+        public static object? GetValueByPath(this object obj, string path)
+        {
+            return ObjectPath.GetValue(obj, path);
+        }
+
+        public static object? GetValueByPathOrNull(this object obj, string path)
+        {
+            try
+            {
+                return ObjectPath.GetValue(obj, path);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+    }
+}
+```
+
 ## Features
 
 - Access nested properties and fields.
@@ -109,3 +202,4 @@ var invalid = ObjectPath.GetValue(obj, "name", ignoreCase: false);
 - Supports array and list index access.
 - Case-insensitive by default, with an option for case sensitivity.
 - Handles complex nested structures.
+- Provides safe access with `GetValueByPathOrNull`.
