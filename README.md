@@ -8,6 +8,7 @@ Install the ObjectPath library via NuGet:
 
 ```bash
 dotnet add package ObjectPath
+```
 
 ## Usage
 
