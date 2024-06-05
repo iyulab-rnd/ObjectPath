@@ -3,11 +3,12 @@
     <LangVersion>preview</LangVersion>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Version>1.0.3</Version>
+    <Version>1.0.4</Version>
     <Authors>iyulab</Authors>
     <Company>Iyulab Corporation</Company>
     <Owners>iyulab-rnd</Owners>
     <Copyright>Copyright (c) Iyulab Corporation 2024.</Copyright>
+    <PackageProjectUrl>https://github.com/iyulab-rnd/ObjectPath</PackageProjectUrl>
     <RepositoryUrl>https://github.com/iyulab-rnd/ObjectPath.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageIconUrl>https://raw.githubusercontent.com/iyulab-rnd/public/main/images/iyulab_128.png</PackageIconUrl>
